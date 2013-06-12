@@ -40,22 +40,28 @@ def convertToGrayScaleLuminosity(img):
             mat[i,j] = value
     return mat
 
-def captureImg(size,filename,number,extension):
+def captureImg(size,filename,extension,number,start_number=0):
     cv.NamedWindow("camera", 1)
     capture = cv.CaptureFromCAM(0)
     start_time = time.clock()
+    cur_time = 0
     counter = 0
+    start = False
     while True:
         img = cv.QueryFrame(capture)
         cv.ShowImage("camera", img)
-        start_time += time.clock() - start_time
+        if start == True:
+            cur_time = time.clock() - start_time
 
-        if cv.WaitKey(10) == 27:
+        key = cv.WaitKey(10)
+        if key == 27:
             break
+        if key == 32:
+            start = True
+            start_time = time.clock()
         if counter == number:
             break
-        if start_time > 2*(counter+1):
-            print start_time
+        if start and cur_time > 2*(counter+1):
             thumbnail = cv.CreateMat(size[0], size[1], cv.CV_8UC3)
             cv.Resize(img, thumbnail)
             cv.SaveImage(filename+str(counter)+extension, thumbnail)
