@@ -1,18 +1,8 @@
 #from cv2 import *
-import cv2.cv as cv
-import time
-
-cv.NamedWindow("camera", 1)
-
-capture = cv.CaptureFromCAM(0)
-
-while True:
-    img = cv.QueryFrame(capture)
-    cv.ShowImage("camera", img)
-    if cv.WaitKey(10) == 27:
-        cv.SaveImage("image.bmp", img)
-        break
-    
+from CameraCapture import *
+captureImg([128,128])
+#def save():
+#    cv.SaveImage("image.bmp", img)
 # initialize the camera
 #frame = cv.CaptureFromCAM(0)
 #img = cv.QueryFrame(frame)
