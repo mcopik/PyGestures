@@ -1,0 +1,4 @@
+PyGestures
+==========
+
+Hand gesture recognition.
