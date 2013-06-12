@@ -1,6 +1,7 @@
 #from cv2 import *
 from CameraCapture import *
-captureImg([128,128],"image.bmp")
+convertImg("image.bmp","image_gray.bmp",ConversionType.AVERAGE)
+#captureImg([128,128],"image.bmp")
 #captureImg("image.bmp")
 #loadImg("image.bmp")
 #def save():
