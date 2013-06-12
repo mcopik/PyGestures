@@ -4,9 +4,9 @@ matplotlib.use('Qt4Agg')
 import matplotlib.pylab as pylab
 from cv2 import *
 from CameraCapture import loadImg,captureImg
-"""
-for i in range(8):
-    captureImg([128,128],"data"+str(i)+".bmp")
+
+#for i in range(2):
+captureImg([128,128],"testdata",8,".bmp")
 """
 from pybrain.tools.shortcuts import *
 from pybrain.structure import SigmoidLayer
@@ -92,7 +92,7 @@ for i in range(2):
 out = percentError(trainer.testOnClassData(dataset=dataTest),dataTest['class'])
 print "error: " + str(out)
 
- 
+ """
  #   out = fnn.activateOnDataset(griddata)
 #    out = out.argmax(axis=1)  # the highest output activation gives the class
 #    out = out.reshape(X.shape)
