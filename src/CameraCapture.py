@@ -61,11 +61,12 @@ def captureImg(size,filename,extension,number,start_number=0):
             start_time = time.clock()
         if counter == number:
             break
-        if start and cur_time > 2*(counter+1):
+        if start and cur_time > 5*(counter+1):
             thumbnail = cv.CreateMat(size[0], size[1], cv.CV_8UC3)
             cv.Resize(img, thumbnail)
-            cv.SaveImage(filename+str(counter)+extension, thumbnail)
+            cv.SaveImage(filename+str(counter+start_number)+extension, thumbnail)
             counter += 1
+            print 'Captured!'
         
 def convertImg(src,dst,conversion):
     img = cv.LoadImage(src)
@@ -78,8 +79,12 @@ def convertImg(src,dst,conversion):
     else:
         cv.SaveImage(dst, convertToGrayScaleLuminosity(thumbnail))
 
-def loadImg(src):
+def loadImg(src,scale = [0,0]):
     img = cv.LoadImageM(src)
+    if scale[0] != 0:
+        thumbnail = cv.CreateMat(scale[0],scale[1],cv.CV_8UC3)
+        cv.Resize(img, thumbnail)
+        img = thumbnail
     gray = convertToGrayScaleLuminosity(img)
     for i in range(gray.width):
         for j in range(gray.height):

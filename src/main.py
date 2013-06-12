@@ -4,9 +4,9 @@ matplotlib.use('Qt4Agg')
 import matplotlib.pylab as pylab
 from cv2 import *
 from CameraCapture import loadImg,captureImg
-
-#for i in range(2):
-captureImg([128,128],"testdata",8,".bmp")
+"""
+for i in range(2):
+    captureImg([128,128],"testdata",".bmp",5,100 )
 """
 from pybrain.tools.shortcuts import *
 from pybrain.structure import SigmoidLayer
@@ -21,27 +21,19 @@ from pylab import ion, ioff, figure, draw, contourf, clf, show, hold, plot
 from scipy import diag, arange, meshgrid, where
 from numpy.random import multivariate_normal
 
-alldata = ClassificationDataSet(128*128,1,nb_classes=4)
-for i in range(6):
-    img = loadImg("reka"+str(i)+".bmp")
+alldata = ClassificationDataSet(40*40,1,nb_classes=5)
+klass = 0
+for k in range(40):
+    img = loadImg("testdata"+str(k)+".bmp",scale = [40,40])
     data = []
     for i in range(img.width):
         for j in range(img.height):
             data.append(img[i,j])
-    if i <= 3:
-        alldata.addSample(data,[0])
-    else:
-        alldata.addSample(data,[1])
-for i in range(6):
-    img = loadImg("data"+str(i+1)+".bmp")
-    data = []
-    for i in range(img.width):
-        for j in range(img.height):
-            data.append(img[i,j])
-    if i % 2 == 0:
-        alldata.addSample(data,[2])
-    else:
-        alldata.addSample(data,[3])
+    alldata.addSample(data,[klass])
+    if k >= (klass+1)*8:
+       klass += 1
+       print k,klass 
+
 
 #means = [(-1,0),(2,4),(3,1)]
 #cov = [diag([1,1]), diag([0.5,1.2]), diag([1.5,0.7])]
@@ -57,7 +49,7 @@ print "Number of training patterns: ", len(trndata)
 print "Input and output dimensions: ", trndata.indim, trndata.outdim
 print "First sample (input, target, class):"
 print trndata['input'][0], trndata['target'][0], trndata['class'][0]
-fnn = buildNetwork( trndata.indim, 100, trndata.outdim, hiddenclass=SigmoidLayer,outclass=SoftmaxLayer )
+fnn = buildNetwork( trndata.indim, 1000, trndata.outdim, hiddenclass=SigmoidLayer,outclass=SoftmaxLayer )
 trainer = BackpropTrainer( fnn, dataset=trndata, momentum=0.1, verbose=True, weightdecay=0.01)
 #ticks = arange(-3.,6.,0.2)
 #X, Y = meshgrid(ticks, ticks)
@@ -78,21 +70,21 @@ for i in range(20):
           "  test error: %5.2f%%" % tstresult
 dataTest = ClassificationDataSet(128*128,1,nb_classes=2)
 
-for i in range(2):
-    img = loadImg("rekaT"+str(i)+".bmp")
+for i in range(5):
+    img = loadImg("testdata"+str(100+i)+".bmp")
     data = []
     for i in range(img.width):
         for j in range(img.height):
             data.append(img[i,j])
-    if i % 2 == 0:
-        dataTest.addSample(data,[0])
-    else:
-        dataTest.addSample(data,[1])
+    #if i % 2 == 0:
+        dataTest.addSample(data,[i])
+    #else:
+    #   dataTest.addSample(data,[1])
 
 out = percentError(trainer.testOnClassData(dataset=dataTest),dataTest['class'])
 print "error: " + str(out)
 
- """
+
  #   out = fnn.activateOnDataset(griddata)
 #    out = out.argmax(axis=1)  # the highest output activation gives the class
 #    out = out.reshape(X.shape)
