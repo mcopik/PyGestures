@@ -69,7 +69,6 @@ def captureImg(size,filename,extension,number,start_number=0):
             print 'Captured!'
 
 def getImg(capture,size):
-    #cv.NamedWindow("camera", 1)
     start_time = time.clock()
     cur_time = 0
     while True:
@@ -78,6 +77,8 @@ def getImg(capture,size):
         if cur_time > 4:
             break
     img = cv.QueryFrame(capture)
+    cv.NamedWindow("Captured image", 1)
+    cv.ShowImage("Captured image", img)
         #if start == True:
     #        cur_time = time.clock() - start_time
 
@@ -120,5 +121,4 @@ def loadImg(src,scale = [0,0]):
     for i in range(gray.width):
         for j in range(gray.height):
             gray[i,j] = gray[i,j]/255.0
-    cv.SaveImage("spec"+src, gray)
     return gray

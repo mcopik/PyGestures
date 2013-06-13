@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QApplication,QMainWindow,QWidget,QVBoxLayout,QPushButton,QLineEdit,QMessageBox
 from PyQt4 import Qt
-from pyqt import VideoWidget
+from VideoWidget import VideoWidget
 from NeuralNetwork import NeuralNetwork
 from CameraCapture import getImg
 import sys
