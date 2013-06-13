@@ -66,5 +66,3 @@ class VideoWidget(QWidget):
         frame = cv.QueryFrame(self._capture)
         self._image = self._build_image(frame)
         self.update()
- 
- 

@@ -67,6 +67,37 @@ def captureImg(size,filename,extension,number,start_number=0):
             cv.SaveImage(filename+str(counter+start_number)+extension, thumbnail)
             counter += 1
             print 'Captured!'
+
+def getImg(capture,size):
+    #cv.NamedWindow("camera", 1)
+    start_time = time.clock()
+    cur_time = 0
+    while True:
+        cur_time = time.clock() - start_time
+        key = cv.WaitKey(10)
+        if cur_time > 4:
+            break
+    img = cv.QueryFrame(capture)
+        #if start == True:
+    #        cur_time = time.clock() - start_time
+
+    #    key = cv.WaitKey(10)
+    #   if key == 27:
+    #        break
+     #   if key == 32:
+      #      start = True
+       #     start_time = time.clock()
+        #if start and cur_time > 4:
+            
+            #cv.ShowImage("camera", img)
+    thumbnail = cv.CreateMat(size[0], size[1], cv.CV_8UC3)
+    cv.Resize(img, thumbnail)
+    gray = convertToGrayScaleLuminosity(thumbnail)
+    data = []
+    for i in range(size[0]):
+        for j in range(size[1]):
+            data.append(gray[i,j]/255)
+    return data
         
 def convertImg(src,dst,conversion):
     img = cv.LoadImage(src)
