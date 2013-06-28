@@ -68,15 +68,15 @@ def captureImg(size,filename,extension,number,start_number=0):
             counter += 1
             print 'Captured!'
 
-def getImg(capture,size):
+def getImg(capture,size=[640,480]):
     start_time = time.clock()
     cur_time = 0
     while True:
         cur_time = time.clock() - start_time
         key = cv.WaitKey(10)
+        img = cv.QueryFrame(capture)
         if cur_time > 4:
             break
-    img = cv.QueryFrame(capture)
     cv.NamedWindow("Captured image", 1)
     cv.ShowImage("Captured image", img)
         #if start == True:
@@ -99,6 +99,31 @@ def getImg(capture,size):
         for j in range(size[1]):
             data.append(gray[i,j]/255)
     return data
+
+def getRealImg(capture,size=[640,480]):
+    start_time = time.clock()
+    cur_time = 0
+    while True:
+        cur_time = time.clock() - start_time
+        key = cv.WaitKey(10)
+        img = cv.QueryFrame(capture)
+        if cur_time > 4:
+            break
+    cv.NamedWindow("Captured image", 1)
+    cv.ShowImage("Captured image", img)
+        #if start == True:
+    #        cur_time = time.clock() - start_time
+
+    #    key = cv.WaitKey(10)
+    #   if key == 27:
+    #        break
+     #   if key == 32:
+      #      start = True
+       #     start_time = time.clock()
+        #if start and cur_time > 4:
+            
+            #cv.ShowImage("camera", img)
+    return img
         
 def convertImg(src,dst,conversion):
     img = cv.LoadImage(src)
