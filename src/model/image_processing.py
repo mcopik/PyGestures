@@ -53,6 +53,9 @@ class ImageProcessing(object):
             return gray_image
         return wrapper
     def yCbCrSkinDetection(self,func=None):
+        '''
+        "Hand gesture recognition using a neural network shape fitting technique"
+        '''
         def wrapper(image,param = None):
             img = image
             if func is not None:
@@ -74,6 +77,31 @@ class ImageProcessing(object):
                         img[j,i] = [0,0,0]
             return img
         return wrapper
+    def hsvSkinDetection(self,func = None):
+        '''
+        '''
+        def wrapper(image,param = None):
+            img = image
+            if func is not None:
+                img = func(image,param)
+            hsv_image = cv.CreateImage(cv.GetSize(img), 8, 3)
+            cv.CvtColor(img, hsv_image, cv.CV_BGR2HSV)
+
+            #COLOR_MIN = cv.Scalar(0,10,60)
+            #COLOR_MAX = cv.Scalar(20,150,255)
+            #ret = cv.CreateImage(cv.GetSize(hsv_image), 8, 1)
+            #cv.InRangeS(hsv_image, COLOR_MIN, COLOR_MAX, ret)
+            
+            for i in range(img.width):
+                for j in range(img.height):
+                    pixel = hsv_image[j,i]
+                    #print pixel
+                    if not (pixel[0] > 0 and pixel[0] < 25 and
+                            pixel[1] > 58 and pixel[1] < 174):
+                        img[j,i] = [0,0,0]
+            return img
+            #return ret
+        return wrapper    
     def gaussianBlur(self,func = None):
         def wrapper(image,param = None):
             img = image
@@ -92,4 +120,3 @@ class ImageProcessing(object):
             cv.Smooth(img,dst,cv.CV_MEDIAN,self.median_size,self.median_size)
             return dst
         return wrapper
-    

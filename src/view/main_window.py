@@ -52,8 +52,8 @@ class MainWindowSignals():
         process = ImageProcessing()
         process.scale_width = 40
         process.scale_height = 40
-        func = process.medianFilter(process.medianFilter(process.medianFilter(process.yCbCrSkinDetection())))
-        img = cv.LoadImageM("testdata66.bmp")
+        func = process.medianFilter(process.yCbCrSkinDetection())
+        img = cv.LoadImageM("test3.png")
         img = func(img)
         cv.NamedWindow("Captured image")
         cv.ShowImage("Captured image", img)
