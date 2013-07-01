@@ -3,11 +3,12 @@ Created on Jun 28, 2013
 
 @author: mcopik
 '''
-
+import cv2.cv as cv
 from PyQt4.QtGui import QMainWindow,QGridLayout,QWidget,QPushButton
 from PyQt4.QtCore import SIGNAL
 
 from video_widget import VideoWidget
+from model.image_processing import ImageProcessing
 
 class MainWindow(object):
     '''
@@ -48,4 +49,11 @@ class MainWindowSignals():
     def __init__(self,main_window):
         self.main_window = main_window
     def trainNetwork(self):
-        print "OK"
+        process = ImageProcessing()
+        process.scale_width = 40
+        process.scale_height = 40
+        func = process.scale()
+        img = cv.LoadImageM("testdata60.bmp")
+        img = func(img)
+        cv.NamedWindow("Captured image")
+        cv.ShowImage("Captured image", img)
