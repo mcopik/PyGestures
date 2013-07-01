@@ -5,6 +5,7 @@ Created on Jul 1, 2013
 '''
 
 import cv2.cv   as  cv
+import cv2
 import numpy    as  np
 
 class ImageProcessing(object):
@@ -23,6 +24,11 @@ class ImageProcessing(object):
     cb_max = DEFAULT_CB_MAX
     cr_min = DEFAULT_CR_MIN
     cr_max = DEFAULT_CR_MAX
+    # blur
+    DEFAULT_GAUSSIAN_SIZE = 3
+    gaussian_size = DEFAULT_GAUSSIAN_SIZE
+    DEFAULT_MEDIAN_SIZE = 5
+    median_size = DEFAULT_MEDIAN_SIZE
     def __init__(self):
         '''
         Constructor
@@ -68,5 +74,22 @@ class ImageProcessing(object):
                         img[j,i] = [0,0,0]
             return img
         return wrapper
-       
+    def gaussianBlur(self,func = None):
+        def wrapper(image,param = None):
+            img = image
+            if func is not None:
+                img = func(image,param)
+            dst = cv.CreateImage(cv.GetSize(img),8,len(img[0,0]))
+            cv.Smooth(img,dst,cv.CV_GAUSSIAN,self.gaussian_size,self.gaussian_size)
+            return dst
+        return wrapper
+    def medianFilter(self,func = None):
+        def wrapper(image,param = None):
+            img = image
+            if func is not None:
+                img = func(image,param)
+            dst = cv.CreateImage(cv.GetSize(img),8,len(img[0,0]))
+            cv.Smooth(img,dst,cv.CV_MEDIAN,self.median_size,self.median_size)
+            return dst
+        return wrapper
     
