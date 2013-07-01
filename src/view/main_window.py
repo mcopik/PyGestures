@@ -52,7 +52,7 @@ class MainWindowSignals():
         process = ImageProcessing()
         process.scale_width = 40
         process.scale_height = 40
-        func = process.scale()
+        func = process.gray(process.yCbCrSkinDetection())
         img = cv.LoadImageM("testdata60.bmp")
         img = func(img)
         cv.NamedWindow("Captured image")
