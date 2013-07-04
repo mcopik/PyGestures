@@ -199,3 +199,4 @@ class MainWindowSignals():
     def trainNetwork(self):
         nn = NeuralNetwork([40,40])
         nn.loadClassesFromFile("train_data\\classes.txt")
+        nn.loadTestData()
