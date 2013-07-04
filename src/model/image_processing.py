@@ -178,7 +178,7 @@ class ImageProcessing(object):
             index = 0
             size = 0
             second_index = 0
-            new_image = np.zeros(cv.GetSize(img),np.uint8)
+            new_image = np.zeros((img.height,img.width),np.uint8)
             for i in range(len(contours)):
                 if len(contours[i]) > size:
                     size = len(contours[i])
@@ -189,7 +189,8 @@ class ImageProcessing(object):
             cv2.drawContours(new_image, contours[index], -1, cv.Scalar(255), 1)
             cv2.drawContours(new_image, contours, index, cv.Scalar(255), -1)
             cv_image = cv.CreateImage(cv.GetSize(img),8,1)
-            
+            print cv.GetSize(img)
+            print cv.GetSize(cv_image)
             for i in range(img.width):
                 for j in range(img.height):
                     cv_image[j,i] = new_image[j,i]
@@ -203,11 +204,6 @@ class ImageProcessing(object):
             #        size = len(contours)
             #    i += 1
             #    contours = contours.h_next()
-            ret = cv.CreateImage(cv.GetSize(img), 8,1)
-            temp = cv.fromarray(np.int8(new_image))
-            #print ret,temp
-            #cv.CvtColor(temp, ret, cv.CV_GRAY2BGR)
-            print cv_image
             return cv_image
         return wrapper
     def ellipseSkinDetection(self,func = None):

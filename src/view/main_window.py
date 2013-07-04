@@ -37,7 +37,8 @@ class MainWindow(object):
         '''
         self.mainWidget = QWidget(self.mainWindow)
         self.videoWidget = VideoWidget()
-        self.trainNetworkButton = QPushButton(self.mainWindow)
+        self.trainNetworkButton = QPushButton("Scale capture",self.mainWindow)
+        self.captureButton = QPushButton("Capture",self.mainWindow)
         self.layout = QGridLayout();
         self.layout.addWidget(self.videoWidget,0,0)
         self.layout.addWidget(self.trainNetworkButton,1,0)
@@ -50,6 +51,7 @@ class MainWindow(object):
         self.layout.addWidget(self.crMinSlider,4,0)
         self.crMaxSlider = QSlider(Qt.Horizontal, self.mainWindow)
         self.layout.addWidget(self.crMaxSlider,5,0)
+        self.layout.addWidget(self.captureButton,6,0)
         #self.cbMinSlider.setFocusPolicy(QtCore.Qt.NoFocus)
         #self.cbMinSlider.setGeometry(30, 40, 100, 30)
         self.cbMinSlider.setValue(80)
@@ -58,8 +60,8 @@ class MainWindow(object):
         self.cbMaxSlider.setRange(0,255)
         self.cbMaxSlider.setValue(135)
         self.cbMaxSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCbMax)
-        self.crMinSlider.setValue(130)
         self.crMinSlider.setRange(0,255)
+        self.crMinSlider.setValue(130)
         self.crMinSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCrMin)
         self.crMaxSlider.setRange(0,255)
         self.crMaxSlider.setValue(180)
@@ -69,6 +71,7 @@ class MainWindow(object):
         '''
         self.mainWindowSignals.camera = self.videoWidget._capture
         self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.prepareCapture)
+        self.mainWindow.connect(self.captureButton,SIGNAL("clicked()"),self.mainWindowSignals.captureImage)
 
 class MainWindowSignals():
     '''
@@ -166,12 +169,27 @@ class MainWindowSignals():
                         img[j,i] = [0,0,0]
             cv.ShowImage("Captured image", img)
             key = cv.WaitKey(10)
-            print "Compute time %f s"%(time.clock() - start_time)
+            #print "Compute time %f s"%(time.clock() - start_time)
+    def captureImage(self,size=[320,240]):
+        cv.NamedWindow("Contours", 1)
+        process = ImageProcessing()
+        process.cb_min = self.cb_min
+        process.cb_max = self.cb_max
+        process.cr_min = self.cr_min
+        process.cr_max = self.cr_max
+        func = process.processContour(process.medianFilter(process.yCbCrSkinDetection()))
+        img = cv.QueryFrame(self.camera)
+        thumbnail = cv.CreateMat(size[1], size[0], cv.CV_8UC3)
+        cv.Resize(img, thumbnail)
+        img = thumbnail
+        img = func(img)
+        cv.ShowImage("Contours",img)
     def changedValueCbMin(self,x):
         self.cb_min = x
     def changedValueCbMax(self,x):
         self.cb_max = x    
     def changedValueCrMin(self,x):
         self.cr_min = x
+        print x
     def changedValueCrMax(self,x):
         self.cr_max = x
