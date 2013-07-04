@@ -185,12 +185,9 @@ class ImageProcessing(object):
                     
                     second_index = index
                     index = i
-            print index,size
             cv2.drawContours(new_image, contours[index], -1, cv.Scalar(255), 1)
             cv2.drawContours(new_image, contours, index, cv.Scalar(255), -1)
             cv_image = cv.CreateImage(cv.GetSize(img),8,1)
-            print cv.GetSize(img)
-            print cv.GetSize(cv_image)
             for i in range(img.width):
                 for j in range(img.height):
                     cv_image[j,i] = new_image[j,i]

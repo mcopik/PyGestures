@@ -21,7 +21,8 @@ class NeuralNetwork():
     DEFAULT_WIDTH = 40
     DEFAULT_HEIGHT = 40
     DEFAULT_HIDDEN_LAYER_SIZE = 900
-    DEFAULT_ITERATIONS_NUMBER = 20
+    DEFAULT_ITERATIONS_NUMBER = 40
+    TEST_DATA_PATH = "test_data"
     classes = []
     all_data = None
     TRAIN_DATA_PATH = "train_data"
@@ -100,6 +101,44 @@ class NeuralNetwork():
         dataTest.addSample(data,[0])
         out = self.fnn.activateOnDataset(dataTest)
         print out,out.argmax(axis=1)
+        return 1
+    def testNN(self):
+        onlyfiles = [ f for f in listdir(self.TEST_DATA_PATH) if isfile(join(self.TEST_DATA_PATH,f)) ]
+        #classes_temp = []
+        
+        count = 0
+        count_correct = 0
+        for file in onlyfiles:
+            #check if it is our data
+            
+            strings = string.split(file,"test_data_")
+            if len(strings) != 1 or strings[0] != file:
+                strings = string.split(strings[1],"_")
+                class_number = int(strings[0])
+                img = cv.LoadImageM(join(self.TEST_DATA_PATH,file))
+                thumbnail = cv.CreateMat(self.DEFAULT_HEIGHT,self.DEFAULT_WIDTH,cv.CV_8UC3)
+                cv.Resize(img,thumbnail)
+                img = thumbnail
+                gray_image = cv.CreateImage(cv.GetSize(img),8,1)
+                cv.CvtColor(img,gray_image,cv.CV_RGB2GRAY)
+                data = []
+                for i in range(img.width):
+                    for j in range(img.height):
+                        data.append(gray_image[i,j])
+                dataTest = ClassificationDataSet(self.width*self.height,1,nb_classes=len(self.classes))        
+                dataTest.addSample(data,[class_number])
+                classes_temp = class_number
+                out = self.fnn.activateOnDataset(dataTest)
+                kl = out.argmax(axis=1)
+                if kl != classes_temp:
+                    print "Error! Test data class %d, classified as %d"%(classes_temp,kl)
+                    count += 1
+                else:
+                    count += 1
+                    count_correct += 1
+        
+        success_rate = count_correct/count*100
+        print "Test resu2lt: correct classification in %d percent"%(success_rate)
         return 1
 class ImageNeuralNetwork(NeuralNetwork):
     '''
