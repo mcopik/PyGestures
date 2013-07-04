@@ -8,12 +8,12 @@ import time
 import numpy as np
 import cv2.cv as cv
 from PyQt4.QtGui import QMainWindow,QGridLayout,QWidget,QPushButton,QSlider
-from PyQt4.QtCore import SIGNAL
-from PyQt4.QtCore import *
+from PyQt4.QtCore import SIGNAL,Qt
+
 
 from video_widget import VideoWidget
 from model.image_processing import ImageProcessing
-from Tkconstants import HORIZONTAL
+from model.neural_network import NeuralNetwork
 
 class MainWindow(object):
     '''
@@ -37,11 +37,12 @@ class MainWindow(object):
         '''
         self.mainWidget = QWidget(self.mainWindow)
         self.videoWidget = VideoWidget()
-        self.trainNetworkButton = QPushButton("Scale capture",self.mainWindow)
+        self.scaleButton = QPushButton("Scale capture",self.mainWindow)
+        self.trainNetworkButton = QPushButton("Train network",self.mainWindow)
         self.captureButton = QPushButton("Capture",self.mainWindow)
         self.layout = QGridLayout();
         self.layout.addWidget(self.videoWidget,0,0)
-        self.layout.addWidget(self.trainNetworkButton,1,0)
+        self.layout.addWidget(self.scaleButton,1,0)
         self.mainWidget.setLayout(self.layout)
         self.cbMinSlider = QSlider(Qt.Horizontal, self.mainWindow)
         self.layout.addWidget(self.cbMinSlider,2,0)
@@ -52,6 +53,7 @@ class MainWindow(object):
         self.crMaxSlider = QSlider(Qt.Horizontal, self.mainWindow)
         self.layout.addWidget(self.crMaxSlider,5,0)
         self.layout.addWidget(self.captureButton,6,0)
+        self.layout.addWidget(self.trainNetworkButton,7,0)
         #self.cbMinSlider.setFocusPolicy(QtCore.Qt.NoFocus)
         #self.cbMinSlider.setGeometry(30, 40, 100, 30)
         self.cbMinSlider.setValue(80)
@@ -70,8 +72,9 @@ class MainWindow(object):
         '''
         '''
         self.mainWindowSignals.camera = self.videoWidget._capture
-        self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.prepareCapture)
+        self.mainWindow.connect(self.scaleButton,SIGNAL("clicked()"),self.mainWindowSignals.prepareCapture)
         self.mainWindow.connect(self.captureButton,SIGNAL("clicked()"),self.mainWindowSignals.captureImage)
+        self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.trainNetwork)
 
 class MainWindowSignals():
     '''
@@ -83,7 +86,7 @@ class MainWindowSignals():
     camera = None
     def __init__(self,main_window):
         self.main_window = main_window
-    def trainNetwork(self):
+    def trainNetworkx(self):
         process = ImageProcessing()
         #process.scale_width = 40
         #process.scale_height = 40
@@ -193,3 +196,6 @@ class MainWindowSignals():
         print x
     def changedValueCrMax(self,x):
         self.cr_max = x
+    def trainNetwork(self):
+        nn = NeuralNetwork([40,40])
+        nn.loadClassesFromFile("train_data\\classes.txt")

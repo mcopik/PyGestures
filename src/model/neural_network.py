@@ -13,18 +13,21 @@ class NeuralNetwork():
     DEFAULT_ITERATIONS_NUMBER = 20
     class_number = 0
     classes = []
-    def __init__(self):
-        '''
-        '''
-        self.width = self.DEFAULT_WIDTH
-        self.height = self.DEFAULT_HEIGHT
+    def __init__(self,size = [DEFAULT_WIDTH,DEFAULT_HEIGHT]):
+        self.width = size[0]
+        self.height = size[1]
         self.hidden_layer_size = self.DEFAULT_HIDDEN_LAYER_SIZE
         self.iterations_number = self.DEFAULT_ITERATIONS_NUMBER
-        
     def loadClasses(self,classes):
         self.class_number = len(classes)
         self.classes = classes
-    
+    def loadClassesFromFile(self,path):
+        f = open(path)
+        for line in f:
+            print line
+        f.close()
+    def loadTestData(self):
+        pass
         
 
 
