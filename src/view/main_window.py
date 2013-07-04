@@ -43,10 +43,27 @@ class MainWindow(object):
         self.layout.addWidget(self.trainNetworkButton,1,0)
         self.mainWidget.setLayout(self.layout)
         self.cbMinSlider = QSlider(Qt.Horizontal, self.mainWindow)
-        self.layout.addWidget(self.cbMinSlider)
+        self.layout.addWidget(self.cbMinSlider,2,0)
+        self.cbMaxSlider = QSlider(Qt.Horizontal, self.mainWindow)
+        self.layout.addWidget(self.cbMaxSlider,3,0)
+        self.crMinSlider = QSlider(Qt.Horizontal, self.mainWindow)
+        self.layout.addWidget(self.crMinSlider,4,0)
+        self.crMaxSlider = QSlider(Qt.Horizontal, self.mainWindow)
+        self.layout.addWidget(self.crMaxSlider,5,0)
         #self.cbMinSlider.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.cbMinSlider.setGeometry(30, 40, 100, 30)
-        self.cbMinSlider.valueChanged[int].connect(self.mainWindowSignals.changedValue)
+        #self.cbMinSlider.setGeometry(30, 40, 100, 30)
+        self.cbMinSlider.setValue(80)
+        self.cbMinSlider.setRange(0,255)
+        self.cbMinSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCbMin)
+        self.cbMaxSlider.setRange(0,255)
+        self.cbMaxSlider.setValue(135)
+        self.cbMaxSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCbMax)
+        self.crMinSlider.setValue(130)
+        self.crMinSlider.setRange(0,255)
+        self.crMinSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCrMin)
+        self.crMaxSlider.setRange(0,255)
+        self.crMaxSlider.setValue(180)
+        self.crMaxSlider.valueChanged[int].connect(self.mainWindowSignals.changedValueCrMax)
     def _connectSignals(self):
         '''
         '''
@@ -56,6 +73,10 @@ class MainWindow(object):
 class MainWindowSignals():
     '''
     '''
+    cb_min = 80
+    cb_max = 135
+    cr_min = 130
+    cr_max = 180
     camera = None
     def __init__(self,main_window):
         self.main_window = main_window
@@ -136,14 +157,21 @@ class MainWindowSignals():
             cv.Resize(img, thumbnail)
             cv.CvtColor(thumbnail, ycr, cv.CV_RGB2YCrCb)
             img = thumbnail
+            #print self.cb_max,self.cb_min
             for i in range(img.width):
                 for j in range(img.height):
                     val = ycr[j,i]
-                    if not (val[1] > 80 and val[1] < 135 and
-                            val[2] > 130 and val[2] < 180):
+                    if not (val[1] > self.cb_min and val[1] < self.cb_max and
+                            val[2] > self.cr_min and val[2] < self.cr_max):
                         img[j,i] = [0,0,0]
             cv.ShowImage("Captured image", img)
             key = cv.WaitKey(10)
             print "Compute time %f s"%(time.clock() - start_time)
-    def changedValue(self,x):
-        print x
+    def changedValueCbMin(self,x):
+        self.cb_min = x
+    def changedValueCbMax(self,x):
+        self.cb_max = x    
+    def changedValueCrMin(self,x):
+        self.cr_min = x
+    def changedValueCrMax(self,x):
+        self.cr_max = x
