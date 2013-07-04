@@ -9,9 +9,11 @@ import numpy as np
 import cv2.cv as cv
 from PyQt4.QtGui import QMainWindow,QGridLayout,QWidget,QPushButton,QSlider
 from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import *
 
 from video_widget import VideoWidget
 from model.image_processing import ImageProcessing
+from Tkconstants import HORIZONTAL
 
 class MainWindow(object):
     '''
@@ -40,19 +42,21 @@ class MainWindow(object):
         self.layout.addWidget(self.videoWidget,0,0)
         self.layout.addWidget(self.trainNetworkButton,1,0)
         self.mainWidget.setLayout(self.layout)
-        
-        #self.cbMinSlider = QSlider(QtCore.Qt.Horizontal, self)
-        #sld.setFocusPolicy(QtCore.Qt.NoFocus)
-        #sld.setGeometry(30, 40, 100, 30)
-        #sld.valueChanged[int].connect(self.changeValue)
+        self.cbMinSlider = QSlider(Qt.Horizontal, self.mainWindow)
+        self.layout.addWidget(self.cbMinSlider)
+        #self.cbMinSlider.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.cbMinSlider.setGeometry(30, 40, 100, 30)
+        self.cbMinSlider.valueChanged[int].connect(self.mainWindowSignals.changedValue)
     def _connectSignals(self):
         '''
         '''
-        self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.trainNetwork)
+        self.mainWindowSignals.camera = self.videoWidget._capture
+        self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.prepareCapture)
 
 class MainWindowSignals():
     '''
     '''
+    camera = None
     def __init__(self,main_window):
         self.main_window = main_window
     def trainNetwork(self):
@@ -121,12 +125,12 @@ class MainWindowSignals():
         print cur_time
     def trainHistogramNetwork(self):
         pass
-    def prepareCapture(self,capture,size=[320,240]):
+    def prepareCapture(self,size=[320,240]):
         start_time = time.clock()
         cv.NamedWindow("Captured image", 1)
         while True:
             start_time = time.clock()
-            img = cv.QueryFrame(self.main_window.videoWidget._capture)
+            img = cv.QueryFrame(self.camera)
             thumbnail = cv.CreateMat(size[1], size[0], cv.CV_8UC3)
             ycr = cv.CreateMat(size[1],size[0], cv.CV_8UC3)
             cv.Resize(img, thumbnail)
@@ -141,3 +145,5 @@ class MainWindowSignals():
             cv.ShowImage("Captured image", img)
             key = cv.WaitKey(10)
             print "Compute time %f s"%(time.clock() - start_time)
+    def changedValue(self,x):
+        print x
