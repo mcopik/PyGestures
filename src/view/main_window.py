@@ -52,8 +52,16 @@ class MainWindowSignals():
         process = ImageProcessing()
         process.scale_width = 40
         process.scale_height = 40
-        func = process.medianFilter(process.yCbCrSkinDetection())
-        img = cv.LoadImageM("test3.png")
-        img = func(img)
-        cv.NamedWindow("Captured image")
-        cv.ShowImage("Captured image", img)
+        func = process.processContour(process.medianFilter(process.yCbCrSkinDetection()))
+        func2 = process.processContour(process.medianFilter(process.yCbCrSkinDetection()))
+        func3 = process.medianFilter2(process.processContour(process.medianFilter(process.yCbCrSkinDetection())))
+        func4 = process.combinedSkinDetection(process.medianFilter())
+        for i in range(1):
+            
+            img = cv.LoadImageM("testdata%d.bmp"%i)
+            out = func(img)
+            cv.Save("testdata%dcontour.png"%i,out)
+            cv.NamedWindow("Captured image")
+            cv.ShowImage("Captured image", out)#cv.fromarray(out))
+    def trainHistogramNetwork(self):
+        
