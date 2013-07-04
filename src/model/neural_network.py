@@ -31,7 +31,6 @@ class NeuralNetwork():
         self.hidden_layer_size = self.DEFAULT_HIDDEN_LAYER_SIZE
         self.iterations_number = self.DEFAULT_ITERATIONS_NUMBER
     def loadClasses(self,classes):
-        self.class_number = len(classes)
         self.classes = classes
     def loadClassesFromFile(self,path):
         f = open(path)
@@ -48,7 +47,6 @@ class NeuralNetwork():
             if len(strings) != 1 or strings[0] != file:
                 strings = string.split(strings[1],"_")
                 class_number = int(strings[0])
-                print file,class_number
                 img = cv.LoadImageM(join(self.TRAIN_DATA_PATH,file))
                 thumbnail = cv.CreateMat(self.DEFAULT_HEIGHT,self.DEFAULT_WIDTH,cv.CV_8UC3)
                 cv.Resize(img,thumbnail)
@@ -88,8 +86,21 @@ class NeuralNetwork():
             else:
                 print "epoch: %4d" % self.trainer.totalepochs, \
                   "  train error: %5.2f%%" % trnresult
-
-
+    def classifyImg(self,img):
+        dataTest = ClassificationDataSet(self.width*self.height,1,nb_classes=len(self.classes))
+        thumbnail = cv.CreateMat(self.DEFAULT_HEIGHT,self.DEFAULT_WIDTH,cv.CV_8UC1)
+        cv.Resize(img,thumbnail)
+        img = thumbnail
+        #gray_image = cv.CreateImage(cv.GetSize(img),8,1)
+        #cv.CvtColor(img,gray_image,cv.CV_RGB2GRAY)
+        data = []
+        for i in range(img.width):
+            for j in range(img.height):
+                data.append(img[i,j])
+        dataTest.addSample(data,[0])
+        out = self.fnn.activateOnDataset(dataTest)
+        print out,out.argmax(axis=1)
+        return 1
 class ImageNeuralNetwork(NeuralNetwork):
     '''
     classdocs

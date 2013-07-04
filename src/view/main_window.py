@@ -40,6 +40,7 @@ class MainWindow(object):
         self.scaleButton = QPushButton("Scale capture",self.mainWindow)
         self.trainNetworkButton = QPushButton("Train network",self.mainWindow)
         self.captureButton = QPushButton("Capture",self.mainWindow)
+        self.classifyButton = QPushButton("Classify",self.mainWindow)
         self.layout = QGridLayout();
         self.layout.addWidget(self.videoWidget,0,0)
         self.layout.addWidget(self.scaleButton,1,0)
@@ -54,6 +55,7 @@ class MainWindow(object):
         self.layout.addWidget(self.crMaxSlider,5,0)
         self.layout.addWidget(self.captureButton,6,0)
         self.layout.addWidget(self.trainNetworkButton,7,0)
+        self.layout.addWidget(self.classifyButton,8,0)
         #self.cbMinSlider.setFocusPolicy(QtCore.Qt.NoFocus)
         #self.cbMinSlider.setGeometry(30, 40, 100, 30)
         self.cbMinSlider.setValue(80)
@@ -75,6 +77,7 @@ class MainWindow(object):
         self.mainWindow.connect(self.scaleButton,SIGNAL("clicked()"),self.mainWindowSignals.prepareCapture)
         self.mainWindow.connect(self.captureButton,SIGNAL("clicked()"),self.mainWindowSignals.captureImage)
         self.mainWindow.connect(self.trainNetworkButton,SIGNAL("clicked()"),self.mainWindowSignals.trainNetwork)
+        self.mainWindow.connect(self.classifyButton,SIGNAL("clicked()"),self.mainWindowSignals.captureImage)
 
 class MainWindowSignals():
     '''
@@ -187,6 +190,7 @@ class MainWindowSignals():
         img = thumbnail
         img = func(img)
         cv.ShowImage("Contours",img)
+        class_number = self.nn.classifyImg(img)
     def changedValueCbMin(self,x):
         self.cb_min = x
     def changedValueCbMax(self,x):
@@ -197,7 +201,7 @@ class MainWindowSignals():
     def changedValueCrMax(self,x):
         self.cr_max = x
     def trainNetwork(self):
-        nn = NeuralNetwork([40,40])
-        nn.loadClassesFromFile("train_data\\classes.txt")
-        nn.loadTestData()
-        nn.trainNetwork(20)
+        self.nn = NeuralNetwork([40,40])
+        self.nn.loadClassesFromFile("train_data\\classes.txt")
+        self.nn.loadTestData()
+        self.nn.trainNetwork(10)
