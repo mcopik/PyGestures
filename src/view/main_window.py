@@ -200,3 +200,4 @@ class MainWindowSignals():
         nn = NeuralNetwork([40,40])
         nn.loadClassesFromFile("train_data\\classes.txt")
         nn.loadTestData()
+        nn.trainNetwork(20)
